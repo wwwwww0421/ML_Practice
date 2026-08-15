@@ -24,8 +24,8 @@ def train_test_split(df):
 def create_preprocessor():
     preprocessor = ColumnTransformer(
         transformers=[
-            ('num', StandardScaler(), ['amount']),
-            ('cat', OneHotEncoder(drop='first'), ['category'])
+            ('num', StandardScaler(), ['amount','channel']),
+            ('cat', OneHotEncoder(drop='first'), ['is_fraud'])
         ]
     )
     return preprocessor
@@ -41,11 +41,11 @@ def train_model(train_df, test_df):
         ('classifier', lr)
     ])
 
-    pipeline.fit(train_df[['amount', 'category']], train_df['is_fraud'])
+    pipeline.fit(train_df[['amount', 'channel', 'is_fraud']], train_df['is_fraud'])
     return pipeline
 
 def evaluate_model(pipeline, test_df):
-    X_test = test_df[['amount', 'category']]
+    X_test = test_df[['amount', 'channel', 'is_fraud']]
     y_test = test_df['is_fraud']
 
     y_pred = pipeline.predict(X_test)
