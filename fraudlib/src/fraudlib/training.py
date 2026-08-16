@@ -5,6 +5,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.metrics import classification_report, average_precision_score, precision_recall_curve
+from sklearn.impute import SimpleImputer
 import numpy as np
 
 TARGET_LABEL = 'is_fraud'
@@ -19,7 +20,7 @@ def train_test_split(df):
     """
     cutoff = df['ts'].min() + pd.Timedelta(days=60)
 
-    df[NUMERIC_FEATURES] = df[NUMERIC_FEATURES].fillna(df[NUMERIC_FEATURES].mean())
+    # df[NUMERIC_FEATURES] = df[NUMERIC_FEATURES].fillna(df[NUMERIC_FEATURES].mean())
 
     ## Day 1 - 60
     train_df = df[df['ts'] <= cutoff]
@@ -33,10 +34,20 @@ def train_test_split(df):
 
 
 def create_preprocessor():
+    numerical_pipeline = Pipeline([
+        ('imputer', SimpleImputer(strategy='median'),
+        ('scaler'), StandardScaler())
+    ])
+
+    categorical_pipeline = Pipeline([
+        ('imputer', SimpleImputer(strategy='most_frequent'),
+        ('encoder', OneHotEncoder(drop='first')))
+    ])
+
     preprocessor = ColumnTransformer(
         transformers=[
-            ('num', StandardScaler(), NUMERIC_FEATURES),
-            ('cat', OneHotEncoder(drop='first'), CATEGORICAL_FEATURES)
+            ('num', numerical_pipeline, NUMERIC_FEATURES),
+            ('cat', categorical_pipeline, CATEGORICAL_FEATURES)
         ]
     )
     return preprocessor
