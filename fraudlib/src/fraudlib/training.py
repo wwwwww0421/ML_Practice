@@ -20,8 +20,6 @@ def train_test_split(df):
     """
     cutoff = df['ts'].min() + pd.Timedelta(days=60)
 
-    # df[NUMERIC_FEATURES] = df[NUMERIC_FEATURES].fillna(df[NUMERIC_FEATURES].mean())
-
     ## Day 1 - 60
     train_df = df[df['ts'] <= cutoff]
 
@@ -35,13 +33,13 @@ def train_test_split(df):
 
 def create_preprocessor():
     numerical_pipeline = Pipeline([
-        ('imputer', SimpleImputer(strategy='median'),
-        ('scaler'), StandardScaler())
+        ('imputer', SimpleImputer(strategy='median')),
+        ('scaler', StandardScaler())
     ])
 
     categorical_pipeline = Pipeline([
-        ('imputer', SimpleImputer(strategy='most_frequent'),
-        ('encoder', OneHotEncoder(drop='first')))
+        ('imputer', SimpleImputer(strategy='most_frequent')),
+        ('encoder', OneHotEncoder(drop='first'))
     ])
 
     preprocessor = ColumnTransformer(
