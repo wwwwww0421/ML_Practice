@@ -1,6 +1,7 @@
 pyproject.toml
 src/fraudlib/__init__.py
 src/fraudlib/features.py
+src/fraudlib/promote.py
 src/fraudlib/scoring.py
 src/fraudlib/synth.py
 src/fraudlib/training.py
