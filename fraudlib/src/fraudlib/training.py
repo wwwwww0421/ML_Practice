@@ -78,4 +78,11 @@ def evaluate_model(pipeline, test_df):
 
     precision, recall, thresholds = precision_recall_curve(y_test, y_score)
 
-    return precision, recall, thresholds, report, pr_auc
+    ok = precision[:-1] >= 0.9
+
+    metrics = {
+        "pr_auc": average_precision_score(y_test, y_score),
+        "recall_at_p90": float(recall[:-1][ok].max()) if ok.any() else 0.0,
+    }
+
+    return metrics, report
